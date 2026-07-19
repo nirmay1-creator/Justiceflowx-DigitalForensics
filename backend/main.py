@@ -42,9 +42,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from routers import auth, cases, law
+
 # Include Routers
 app.include_router(auth.router)
 app.include_router(cases.router)
+app.include_router(law.router)
 
 # --- GLOBAL ROUTES ---
 

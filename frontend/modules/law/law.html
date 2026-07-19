@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Legal Education - JusticeFlowX</title>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/justice.css">
+  <style>
+    * { box-sizing: border-box; }
+
+    .law-page {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding: 30px 20px 60px;
+    }
+
+    .law-container {
+      max-width: 960px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ── HEADER ── */
+    .law-header {
+      text-align: center;
+      margin-bottom: 35px;
+      padding: 30px 20px;
+      background: linear-gradient(135deg, rgba(255,159,67,0.12), rgba(255,100,0,0.06));
+      border: 1px solid rgba(255,159,67,0.25);
+      border-radius: 16px;
+    }
+
+    .law-header h1 {
+      color: #ff9f43;
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin: 0 0 8px;
+      letter-spacing: 1px;
+    }
+
+    .law-header h1 i { margin-right: 10px; vertical-align: middle; }
+
+    .law-header p {
+      color: #ccc;
+      font-size: 1.05rem;
+      margin: 0;
+    }
+
+    /* ── SEARCH BAR ── */
+    .search-section { margin-bottom: 25px; }
+
+    .search-bar {
+      display: flex;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid rgba(255,159,67,0.5);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .search-bar:focus-within {
+      border-color: #ff9f43;
+      box-shadow: 0 0 25px rgba(255,159,67,0.25);
+    }
+
+    .search-bar input {
+      flex: 1;
+      padding: 16px 20px;
+      background: rgba(15,15,15,0.95);
+      border: none;
+      color: #fff;
+      font-size: 1.1rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+    }
+
+    .search-bar input::placeholder { color: #777; }
+
+    .search-bar button {
+      padding: 16px 28px;
+      background: linear-gradient(135deg, #ff9f43, #ff6b00);
+      color: #000;
+      border: none;
+      font-weight: 700;
+      font-size: 1.05rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .search-bar button:hover {
+      background: linear-gradient(135deg, #ffb169, #ff8c00);
+    }
+
+    .search-hints {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .hint-chip {
+      padding: 6px 14px;
+      background: rgba(255,159,67,0.1);
+      border: 1px solid rgba(255,159,67,0.3);
+      border-radius: 20px;
+      color: #ff9f43;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .hint-chip:hover {
+      background: rgba(255,159,67,0.25);
+      transform: translateY(-1px);
+    }
+
+    /* ── LOADING ── */
+    .loading-spinner {
+      display: none;
+      text-align: center;
+      padding: 40px 20px;
+      color: #ff9f43;
+    }
+
+    .loading-spinner i { font-size: 2.5rem; }
+    .loading-spinner p { margin-top: 10px; font-size: 1.1rem; }
+
+    /* ── RESULTS ── */
+    .results-area { display: none; }
+
+    .result-card {
+      background: #0d0d0d;
+      border: 1px solid rgba(255,159,67,0.4);
+      border-radius: 14px;
+      padding: 0;
+      margin-bottom: 24px;
+      overflow: hidden;
+      animation: slideUp 0.4s ease;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-card-header {
+      background: linear-gradient(135deg, rgba(255,159,67,0.15), rgba(255,100,0,0.08));
+      padding: 18px 22px;
+      border-bottom: 1px solid rgba(255,159,67,0.3);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .result-card-header .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(255,159,67,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: #ff9f43;
+      flex-shrink: 0;
+    }
+
+    .result-card-header h2 {
+      color: #ff9f43;
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .result-card-header .law-tag {
+      color: #aaa;
+      font-size: 0.85rem;
+      margin-top: 2px;
+    }
+
+    .result-card-body { padding: 22px; }
+
+    .info-block {
+      margin-bottom: 20px;
+    }
+
+    .info-block-title {
+      color: #ff9f43;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .info-block-content {
+      color: #e8e8e8;
+      font-size: 1.05rem;
+      line-height: 1.75;
+    }
+
+    .info-block-content ul {
+      margin: 8px 0 0 0;
+      padding-left: 22px;
+    }
+
+    .info-block-content li {
+      color: #e8e8e8;
+      margin-bottom: 6px;
+      line-height: 1.65;
+    }
+
+    .punishment-box {
+      background: rgba(255,0,0,0.08);
+      border: 1px solid rgba(255,70,70,0.3);
+      border-radius: 10px;
+      padding: 16px 20px;
+      color: #ff6b6b;
+      font-weight: 600;
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+
+    .punishment-box i {
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    .helpline-box {
+      background: rgba(0,200,100,0.08);
+      border: 1px solid rgba(0,200,100,0.3);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-top: 16px;
+    }
+
+    .helpline-box .helpline-title {
+      color: #00c864;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .helpline-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 0;
+      color: #e8e8e8;
+      font-size: 1rem;
+    }
+
+    .helpline-item .hl-number {
+      color: #00e876;
+      font-weight: 700;
+      font-size: 1.15rem;
+      font-family: 'Inter', monospace;
+    }
+
+    /* ── NO RESULTS ── */
+    .no-results {
+      text-align: center;
+      padding: 40px 20px;
+      color: #888;
+    }
+
+    .no-results i { font-size: 3rem; color: #555; margin-bottom: 10px; display: block; }
+    .no-results h3 { color: #bbb; margin-bottom: 8px; }
+
+    /* ── DISCLAIMER ── */
+    .disclaimer {
+      margin-top: 30px;
+      padding: 16px 20px;
+      background: rgba(255, 60, 60, 0.06);
+      border: 1px solid rgba(255, 60, 60, 0.25);
+      border-radius: 10px;
+      color: #ff6b6b;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .disclaimer strong { color: #ff4444; }
+
+    /* ── PASSWORD OVERLAY ── */
+    .password-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.4s ease;
+    }
+
+    .password-modal {
+      background: #0d0d0d;
+      border: 2px solid rgba(255,159,67,0.5);
+      border-radius: 20px;
+      padding: 40px 36px;
+      width: 380px;
+      max-width: 90vw;
+      text-align: center;
+      box-shadow: 0 0 60px rgba(255,159,67,0.15);
+      animation: slideUp 0.5s ease;
+    }
+
+    .password-modal .modal-icon {
+      width: 70px; height: 70px;
+      border-radius: 50%;
+      background: rgba(255,159,67,0.12);
+      border: 2px solid rgba(255,159,67,0.3);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 2rem;
+      color: #ff9f43;
+    }
+
+    .password-modal h2 {
+      color: #ff9f43;
+      font-size: 1.4rem;
+      margin: 0 0 6px;
+    }
+
+    .password-modal .modal-sub {
+      color: #888;
+      font-size: 0.9rem;
+      margin-bottom: 22px;
+    }
+
+    .password-modal input {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(255,159,67,0.06);
+      border: 1px solid rgba(255,159,67,0.4);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 1.05rem;
+      text-align: center;
+      letter-spacing: 3px;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+      transition: border-color 0.3s;
+      margin-bottom: 14px;
+    }
+
+    .password-modal input:focus {
+      border-color: #ff9f43;
+      box-shadow: 0 0 12px rgba(255,159,67,0.2);
+    }
+
+    .password-modal .access-btn {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, #ff9f43, #ff6b00);
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.3s;
+    }
+
+    .password-modal .access-btn:hover {
+      background: linear-gradient(135deg, #ffb169, #ff8c00);
+      box-shadow: 0 4px 20px rgba(255,159,67,0.3);
+    }
+
+    .password-modal .access-error {
+      display: none;
+      color: #ff4444;
+      font-size: 0.85rem;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+
+<body id="top">
+  <div class="scanline-overlay"></div>
+  <div class="noise-overlay"></div>
+
+  <!-- PASSWORD ACCESS OVERLAY -->
+  <div class="password-overlay" id="passwordOverlay">
+    <div class="password-modal">
+      <div class="modal-icon"><i class='bx bx-lock-alt'></i></div>
+      <h2>Restricted Access</h2>
+      <p class="modal-sub">Enter the access code to open the Legal Education Module</p>
+      <input type="password" id="accessCodeInput" placeholder="Enter Access Code" autocomplete="off">
+      <button class="access-btn" onclick="attemptAccess()"><i class='bx bx-log-in'></i> Unlock Module</button>
+      <p class="access-error" id="accessError"><i class='bx bx-error-circle'></i> Incorrect access code. Try again.</p>
+    </div>
+  </div>
+
+  <nav class="navbar">
+    <div class="nav-left">
+      <div class="brand-block">
+        <a href="../../index.html" style="text-decoration: none;">
+          <span class="brand" data-text="JusticeFlowX">JusticeFlowX</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="law-page">
+    <div class="law-container">
+
+      <div class="law-header">
+        <h1><i class='bx bxs-book-reader'></i> Legal Educator</h1>
+        <p>Search any crime or situation. We explain the law, the punishment, and who to call for help — in simple words anyone can understand.</p>
+      </div>
+
+      <div class="search-section">
+        <div class="search-bar">
+          <input type="text" id="crimeSearch" placeholder="Type a crime or situation... e.g. theft, assault, kidnapping">
+          <button id="searchBtn"><i class='bx bx-search'></i> Search</button>
+        </div>
+        <div class="search-hints">
+          <span class="hint-chip" onclick="quickSearch('theft')">Theft</span>
+          <span class="hint-chip" onclick="quickSearch('assault')">Assault</span>
+          <span class="hint-chip" onclick="quickSearch('murder')">Murder</span>
+          <span class="hint-chip" onclick="quickSearch('kidnapping')">Kidnapping</span>
+          <span class="hint-chip" onclick="quickSearch('rape')">Rape</span>
+          <span class="hint-chip" onclick="quickSearch('arson')">Arson</span>
+          <span class="hint-chip" onclick="quickSearch('fraud')">Fraud</span>
+          <span class="hint-chip" onclick="quickSearch('dowry')">Dowry</span>
+          <span class="hint-chip" onclick="quickSearch('cybercrime')">Cybercrime</span>
+          <span class="hint-chip" onclick="quickSearch('domestic violence')">Domestic Violence</span>
+        </div>
+      </div>
+
+      <div class="loading-spinner" id="loadingSpinner">
+        <i class='bx bx-loader-alt bx-spin'></i>
+        <p>Searching legal database...</p>
+      </div>
+
+      <div class="results-area" id="resultsArea">
+        <div id="resultsContainer"></div>
+
+        <div class="disclaimer">
+          <strong><i class='bx bx-error-circle'></i> Disclaimer:</strong> This tool is for educational purposes only. It is NOT formal legal advice. Laws and punishments can vary by state and situation. Always consult a qualified lawyer for your specific case.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ══════════════════════════════════════════════════════════
+    // COMPREHENSIVE INDIAN CRIMINAL LAW DATABASE
+    // Explained in plain English for anyone to understand
+    // ══════════════════════════════════════════════════════════
+    const legalDB = [
+      {
+        title: "Murder",
+        icon: "bx-error-alt",
+        lawRef: "Section 103 - Bharatiya Nyaya Sanhita (BNS), 2023",
+        keywords: ["murder", "kill", "killing", "homicide", "death", "shot", "stabbed", "poisoned"],
+        definition: "Murder means intentionally causing the death of another person. If someone plans to kill someone and actually does it, that is murder. It is one of the most serious crimes in India.",
+        elements: [
+          "The person must have intended (wanted) to cause death.",
+          "The act must have actually caused someone to die.",
+          "The killing was not in self-defense or by accident."
+        ],
+        punishment: "Punishment can be life imprisonment (staying in jail for the rest of your life) or even the death penalty in the rarest of rare cases. There is no option for bail easily.",
+        helplines: [
+          { name: "Police Emergency", number: "112" },
+          { name: "Police Helpline", number: "100" },
+          { name: "Women Helpline", number: "1091" }
+        ]
+      },
+      {
+        title: "Assault (Hurting Someone)",
+        icon: "bx-band-aid",
+        lawRef: "Section 115 - BNS, 2023 (Voluntarily Causing Hurt)",
+        keywords: ["assault", "attack", "hit", "beat", "punch", "hurt", "slap", "kick", "beating", "violence", "injury", "wound"],
+        definition: "Assault means intentionally using physical force on someone to hurt them. If you punch, kick, slap, or physically harm someone on purpose, that is assault. Even threatening to hurt someone can be a crime.",
+        elements: [
+          "The person intentionally used force or violence on another person.",
+          "The victim suffered pain, injury, or fear of being hurt.",
+          "It was not an accident — the person meant to do it."
+        ],
+        punishment: "Simple assault can lead to up to 1 year in jail and/or a fine. If the injury is serious (broken bones, permanent damage), it can go up to 7 years in prison.",
+        helplines: [
+          { name: "Police Emergency", number: "112" },
+          { name: "Ambulance", number: "108" },
+          { name: "Women Helpline", number: "1091" }
+        ]
+      },
+      {
+        title: "Theft (Stealing)",
+        icon: "bx-lock-open-alt",
+        lawRef: "Section 303 - BNS, 2023",
+        keywords: ["theft", "steal", "stealing", "stolen", "robbery", "rob", "robbed", "burglary", "shoplifting", "pickpocket", "loot"],
+        definition: "Theft means taking someone else's property without their permission and without intending to return it. If you take something that belongs to another person and they did not say you could have it, that is theft.",
+        elements: [
+          "Someone took movable property (things you can carry) belonging to another person.",
+          "They took it without the owner's permission.",
+          "They intended to keep it and not give it back."
+        ],
+        punishment: "Simple theft can lead to up to 3 years in prison and/or a fine. If it involves breaking into a house (burglary), the punishment increases to up to 10 years.",
+        helplines: [
+          { name: "Police Emergency", number: "112" },
+          { name: "Police Helpline", number: "100" },
+          { name: "Cyber Crime (if online)", number: "1930" }
+        ]
+      },
+      {
+        title: "Rape (Sexual Assault)",
+        icon: "bx-shield-x",
+        lawRef: "Section 63 - BNS, 2023",
+        keywords: ["rape", "sexual assault", "sexual violence", "molestation", "sexual abuse", "consent", "sexual harassment"],
+        definition: "Rape is when someone forces another person into a sexual act without that person's consent (agreement). Consent given under fear, threat, or when the person is unconscious does NOT count as real consent. This is one of the gravest crimes in India.",
+        elements: [
+          "A sexual act was committed against another person.",
+          "The victim did NOT give free and willing consent.",
+          "The offender used force, fear, threats, or took advantage of the victim."
+        ],
+        punishment: "Minimum 10 years in prison, which can extend to life imprisonment. In cases involving minors (children) or extreme cruelty, the punishment can be life imprisonment without parole or even the death penalty.",
+        helplines: [
+          { name: "Women Helpline (24/7)", number: "1091" },
+          { name: "National Commission for Women", number: "7827-170-170" },
+          { name: "Police Emergency", number: "112" },
+          { name: "Child Helpline (if minor)", number: "1098" }
+        ]
+      },
+      {
+        title: "Kidnapping",
+        icon: "bx-run",
+        lawRef: "Section 137 - BNS, 2023",
+        keywords: ["kidnapping", "kidnap", "abduction", "abducted", "missing", "taken", "hostage", "ransom"],
+        definition: "Kidnapping means taking a person away from their home or guardian by force, deception, or without permission. If a child (under 18) is taken without the guardian's consent, or an adult is taken by force, it is kidnapping.",
+        elements: [
+          "A person was taken or lured away from their lawful guardian or place.",
+          "It was done by force, trickery, or without consent.",
+          "The victim is a minor (under 18) OR was taken against their will."
+        ],
+        punishment: "Up to 7 years in prison and a fine. If kidnapping is done for ransom (money) or to cause harm, the punishment can be life imprisonment or even the death penalty.",
+        helplines: [
+          { name: "Police Emergency", number: "112" },
+          { name: "Child Helpline", number: "1098" },
+          { name: "Women Helpline", number: "1091" },
+          { name: "Missing Persons", number: "1094" }
+        ]
+      },
+      {
+        title: "Arson (Setting Fire on Purpose)",
+        icon: "bx-flame",
+        lawRef: "Section 326 - BNS, 2023 (Mischief by Fire)",
+        keywords: ["arson", "fire", "burn", "burning", "set fire", "flames", "explosion", "blast", "torch"],
+        definition: "Arson means intentionally setting fire to someone's property — like a house, shop, vehicle, or farm. Accidentally causing a fire is NOT arson. It becomes arson only when you light the fire on purpose to cause damage.",
+        elements: [
+          "Someone deliberately (on purpose) set fire to property.",
+          "The property belonged to another person or was shared.",
+          "The fire caused destruction or damage."
+        ],
+        punishment: "Up to 7 years in prison and a fine. If the fire was set knowing people were inside the building, the punishment can increase to life imprisonment.",
+        helplines: [
+          { name: "Fire Brigade", number: "101" },
+          { name: "Police Emergency", number: "112" },
+          { name: "Ambulance", number: "108" }
+        ]
+      },
+      {
+        title: "Fraud / Cheating",
+        icon: "bx-error",
+        lawRef: "Section 318 - BNS, 2023",
+        keywords: ["fraud", "cheat", "cheating", "scam", "scammed", "con", "forgery", "fake", "deceive", "deception", "trick", "swindle", "ponzi"],
+        definition: "Fraud means tricking someone on purpose to steal their money, property, or personal information. If someone lies to you to make you give them money — like a fake lottery, a fake job offer, or a fake investment scheme — that is fraud.",
+        elements: [
+          "Someone deceived (lied to) another person on purpose.",
+          "The victim was tricked into giving away money, property, or valuables.",
+          "The deceiver gained something unfairly because of the lie."
+        ],
+        punishment: "Up to 3 years in prison and a fine. If the fraud involves large amounts of money or affects many people (like a Ponzi scheme), it can be up to 7 years or more.",
+        helplines: [
+          { name: "Cyber Crime Helpline", number: "1930" },
+          { name: "Police Helpline", number: "100" },
+          { name: "Consumer Helpline", number: "1800-11-4000" }
+        ]
+      },
+      {
+        title: "Dowry Harassment / Dowry Death",
+        icon: "bx-home-heart",
+        lawRef: "Section 80 & 86 - BNS, 2023 / Dowry Prohibition Act",
+        keywords: ["dowry", "dowry death", "bride burning", "in-laws", "harassment", "dowry harassment", "cruelty", "marriage", "bride"],
+        definition: "Dowry harassment is when a husband or his family members torture, harass, or abuse a wife because her family did not give enough money, gifts, or property during marriage. If a woman dies within 7 years of marriage under suspicious circumstances related to dowry demands, it is treated as a 'dowry death'.",
+        elements: [
+          "The husband or his relatives made demands for dowry (money/gifts).",
+          "The wife was harassed, tortured, or treated cruelly because of these demands.",
+          "In dowry death cases: the woman died within 7 years of marriage AND there is evidence of cruelty related to dowry."
+        ],
+        punishment: "Dowry harassment: Up to 3 years in prison and a fine. Dowry death: Minimum 7 years in prison, which can extend to life imprisonment. Demanding dowry itself is a crime with up to 5 years in prison.",
+        helplines: [
+          { name: "Women Helpline (24/7)", number: "1091" },
+          { name: "National Commission for Women", number: "7827-170-170" },
+          { name: "Police Emergency", number: "112" },
+          { name: "Domestic Violence Helpline", number: "181" }
+        ]
+      },
+      {
+        title: "Domestic Violence",
+        icon: "bx-home-alt",
+        lawRef: "Protection of Women from Domestic Violence Act, 2005",
+        keywords: ["domestic violence", "wife beating", "husband abuse", "spousal abuse", "home violence", "family violence", "emotional abuse", "verbal abuse"],
+        definition: "Domestic violence is any form of abuse — physical (hitting), emotional (constant insults, threats), sexual, or economic (not giving money for basic needs) — that happens within a home or family. It mostly affects women and children. Even stopping someone from going out or meeting their family is domestic violence.",
+        elements: [
+          "The abuser and victim live (or lived) together in a domestic relationship.",
+          "The abuse can be physical, emotional, verbal, sexual, or economic.",
+          "The victim was harmed, threatened, or made to feel unsafe in their own home."
+        ],
+        punishment: "Up to 1 year in prison and/or a fine of Rs. 20,000. The court can also issue a Protection Order (a legal order telling the abuser to stay away from the victim) and can order the abuser to pay for damages and living expenses.",
+        helplines: [
+          { name: "Women Helpline (24/7)", number: "1091" },
+          { name: "Domestic Violence Helpline", number: "181" },
+          { name: "National Commission for Women", number: "7827-170-170" },
+          { name: "Police Emergency", number: "112" }
+        ]
+      },
+      {
+        title: "Cybercrime (Online Crime)",
+        icon: "bx-laptop",
+        lawRef: "Information Technology Act, 2000 / Section 319 BNS",
+        keywords: ["cybercrime", "hacking", "online fraud", "identity theft", "phishing", "cyber bullying", "online harassment", "data theft", "ransomware", "cyber stalking", "internet crime", "online scam"],
+        definition: "Cybercrime is any crime that happens using the internet or computers. This includes hacking into someone's account, stealing their personal data, sending threatening messages online, posting fake or harmful content about someone, or tricking someone into giving away money through fake websites or emails.",
+        elements: [
+          "The crime was committed using a computer, phone, or the internet.",
+          "Someone's data, money, privacy, or reputation was harmed.",
+          "The offender accessed systems or information without permission OR used digital tools to cheat/harass."
+        ],
+        punishment: "Hacking: Up to 3 years in prison and fine up to Rs. 5 lakh. Identity theft: Up to 3 years and Rs. 1 lakh fine. Online fraud: Up to 7 years. Publishing obscene content: Up to 5 years. Cyber stalking: Up to 3 years.",
+        helplines: [
+          { name: "Cyber Crime Helpline (24/7)", number: "1930" },
+          { name: "Cyber Crime Portal", number: "cybercrime.gov.in" },
+          { name: "Police Emergency", number: "112" }
+        ]
+      },
+      {
+        title: "Drug Offences",
+        icon: "bx-capsule",
+        lawRef: "Narcotic Drugs and Psychotropic Substances Act (NDPS), 1985",
+        keywords: ["drugs", "narcotics", "cocaine", "heroin", "marijuana", "ganja", "weed", "drug trafficking", "drug abuse", "substance abuse", "charas", "opium", "meth"],
+        definition: "Drug offences include possessing (having), selling, buying, transporting, or manufacturing illegal drugs. Even consuming drugs in many cases is a crime in India. The law is very strict about this, especially for people who sell or transport drugs.",
+        elements: [
+          "The person possessed, sold, bought, or transported a banned substance.",
+          "The substance is classified as illegal under the NDPS Act.",
+          "The person did this knowingly and intentionally."
+        ],
+        punishment: "Small quantity (personal use): Up to 1 year in prison or fine or both. Commercial quantity (selling/trafficking): 10 to 20 years in prison and a fine of Rs. 1-2 lakh. Repeat offenders can get 30 years. Financing drug trafficking can lead to the death penalty.",
+        helplines: [
+          { name: "NIMHANS Drug De-addiction", number: "080-46110007" },
+          { name: "Drug Abuse Helpline", number: "1800-11-0031" },
+          { name: "Police Emergency", number: "112" }
+        ]
+      },
+      {
+        title: "Child Abuse / POCSO",
+        icon: "bx-child",
+        lawRef: "POCSO Act, 2012 (Protection of Children from Sexual Offences)",
+        keywords: ["child abuse", "child sexual abuse", "pocso", "minor", "child exploitation", "child labour", "underage", "pedophile", "child trafficking"],
+        definition: "Any form of sexual abuse, assault, harassment, or exploitation of a child (anyone under 18 years old) is a severe crime under the POCSO Act. This includes inappropriate touching, showing obscene material to children, using children for pornography, or any sexual act with a child. A child CANNOT give legal consent.",
+        elements: [
+          "The victim is under 18 years old (a minor/child).",
+          "A sexual act, assault, or harassment was committed against the child.",
+          "Any form of exploitation or use of the child for sexual purposes occurred."
+        ],
+        punishment: "Minimum 3 years in prison (for sexual harassment) up to life imprisonment or death penalty (for aggravated penetrative sexual assault). Sharing child pornography: 5-7 years. All offences under POCSO are non-bailable.",
+        helplines: [
+          { name: "Child Helpline (24/7)", number: "1098" },
+          { name: "Police Emergency", number: "112" },
+          { name: "Women & Child Development", number: "181" },
+          { name: "NCPCR", number: "011-23478200" }
+        ]
+      },
+      // ══════════════════════════════════════════════════════════
+      // APPENDED ENTRIES — 18 MORE INDIAN CRIMINAL LAWS
+      // ══════════════════════════════════════════════════════════
+      {
+        title: "Robbery (Theft + Violence)",
+        icon: "bx-mask",
+        lawRef: "Section 309 - BNS, 2023",
+        keywords: ["robbery", "loot", "looting", "hold up", "holdup", "armed robbery", "dacoity", "dacoit", "snatching", "snatch"],
+        definition: "Robbery is when someone steals from you AND uses force or threats while doing it. Think of it like theft plus violence. If someone grabs your phone and pushes you down, or threatens you with a weapon to take your wallet, that is robbery — not just theft.",
+        elements: [
+          "Someone stole property from another person.",
+          "They used physical force, threats, or fear to carry out the theft.",
+          "The violence happened right before, during, or right after the stealing."
+        ],
+        punishment: "Up to 10 years in prison and a fine. If done with a deadly weapon (knife, gun), it can be up to 14 years. If 5 or more people commit robbery together, it is called Dacoity and carries up to life imprisonment.",
+        helplines: [
+          { name: "Police Emergency", number: "112" },
+          { name: "Police Helpline", number: "100" },
+          { name: "Ambulance", number: "108" }
+        ]
+      },
+      {
+        title: "Extortion (Forcing Someone to Pay)",
+        icon: "bx-dollar-circle",
+        lawRef: "Section 308 - BNS, 2023",
+        keywords: ["extortion", "blackmail", "threatening", "ransom", "protection money", "hafta", "demanding money", "coercion"],
+        definition: "Extortion means forcing someone to give you money, property, or do something by threatening to hurt them, ruin their reputation, or harm their family. It is like bullying someone into handing over their stuff. Even threatening to release embarrassing photos unless someone pays you is extortion.",
+        elements: [
+          "The person intentionally put someone in fear of harm (physical, financial, or reputational).",
+          "They used that fear to make the victim hand over money, property, or a valuable document.",
+          "The threat was the reason the victim gave in."
+        ],
+        punishment: "Up to 3 years in prison and a fine. If the threat involved death or serious injury, it can be up to 7 years. If done repeatedly (like demanding monthly 'protection money'), the sentence increases further.",
+        helplines: [
+          { name: "Police Emergency", number: "112" },
+          { name: "Cyber Crime Helpline", number: "1930" },
+          { name: "Anti-Corruption Helpline", number: "1800-11-0031" }
+        ]
+      },
+      {
+        title: "Criminal Intimidation (Threats)",
+        icon: "bx-error-alt",
+        lawRef: "Section 351 - BNS, 2023",
+        keywords: ["threat", "threatening", "intimidation", "death threat", "scare", "scared", "menace", "warn"],
+        definition: "Criminal intimidation means threatening someone with injury to their body, reputation, or property, with the intention of scaring them into doing something they don't want to do, or to stop them from doing something they have a right to do. Even a verbal threat like 'I will destroy you' can be a crime if meant seriously.",
+        elements: [
+          "A person made a threat (spoken, written, or through actions) to cause harm.",
+          "The threat was intended to cause alarm or fear in the victim.",
+          "The goal was to force the victim to act against their will or stop them from acting freely."
+        ],
+        punishment: "Up to 2 years in prison and/or a fine. If the threat is to cause death or serious injury, or to destroy property by fire, it can be up to 7 years.",
+        helplines: [
+          { name: "Police Emergency", number: "112" },
+          { name: "Women Helpline", number: "1091" },
+          { name: "Cyber Crime (online threats)", number: "1930" }
+        ]
+      },
+      {
+        title: "Defamation (Ruining Someone's Name)",
+        icon: "bx-message-x",
+        lawRef: "Section 356 - BNS, 2023",
+        keywords: ["defamation", "slander", "libel", "reputation", "false accusation", "fake news", "spreading rumours", "character assassination"],
+        definition: "Defamation means intentionally saying or writing something false about someone that damages their reputation in society. If you spread lies about a person — telling people they are a thief when they are not, or posting false accusations on social media — that is defamation. Truth is a valid defence.",
+        elements: [
+          "A person made or published a statement (spoken, written, or online) about someone.",
+          "The statement was false or misleading.",
+          "The statement lowered the victim's reputation in the eyes of others."
+        ],
+        punishment: "Up to 2 years in prison and/or a fine. The victim can also file a civil case for financial compensation (damages) for the harm caused to their reputation.",
+        helplines: [
+          { name: "Police Helpline", number: "100" },
+          { name: "Cyber Crime Helpline", number: "1930" },
+          { name: "Legal Aid (NALSA)", number: "15100" }
+        ]
+      },
+      {
+        title: "Stalking",
+        icon: "bx-walk",
+        lawRef: "Section 78 - BNS, 2023",
+        keywords: ["stalking", "following", "stalker", "watching", "spying", "tracking", "surveillance", "obsession", "creepy"],
+        definition: "Stalking means repeatedly following, watching, or contacting someone against their will in a way that makes them feel unsafe or afraid. This includes physical stalking (following someone around) and cyber stalking (sending repeated unwanted messages, tracking their location, monitoring their social media). If someone says 'stop contacting me' and you keep doing it, that is stalking.",
+        elements: [
+          "A person repeatedly followed, contacted, or monitored another person.",
+          "The victim clearly did not want this attention or felt scared/uncomfortable.",
+          "The behaviour was persistent and intentional, not a one-time incident."
+        ],
+        punishment: "First offence: Up to 3 years in prison and a fine. Second or subsequent offence: Up to 5 years in prison and a fine.",
+        helplines: [
+          { name: "Women Helpline (24/7)", number: "1091" },
+          { name: "Cyber Crime Helpline", number: "1930" },
+          { name: "Police Emergency", number: "112" }
+        ]
+      },
+      {
+        title: "Eve Teasing / Sexual Harassment",
+        icon: "bx-shield-x",
+        lawRef: "Section 75 - BNS, 2023",
+        keywords: ["eve teasing", "sexual harassment", "catcalling", "groping", "molestation", "inappropriate touching", "workplace harassment", "posh", "vishakha"],
+        definition: "Sexual harassment includes unwanted sexual comments, gestures, touching, or behaviour directed at someone. This covers catcalling on the street, groping on a bus, making dirty jokes at work, or sending unwanted sexual messages. Nobody has the right to make you feel uncomfortable with sexual behaviour — not a stranger, a colleague, or even a boss.",
+        elements: [
+          "A person engaged in unwelcome sexual behaviour (words, gestures, touch, or online).",
+          "The behaviour was directed at someone who did not want or invite it.",
+          "The behaviour was intended to — or did — humiliate, intimidate, or create a hostile environment."
+        ],
+        punishment: "Up to 3 years in prison and/or a fine. Under the POSH Act (workplaces): the Internal Complaints Committee can recommend termination and compensation. Repeat offenders face double the penalty.",
+        helplines: [
+          { name: "Women Helpline (24/7)", number: "1091" },
+          { name: "SHe-Box (Workplace Complaints)", number: "shebox.nic.in" },
+          { name: "Police Emergency", number: "112" },
+          { name: "NCW WhatsApp", number: "7827-170-170" }
+        ]
+      },
+      {
+        title: "Acid Attack",
+        icon: "bx-droplet",
+        lawRef: "Section 124 - BNS, 2023",
+        keywords: ["acid attack", "acid", "chemical attack", "corrosive substance", "vitriolage", "burn attack"],
+        definition: "An acid attack is when someone throws acid or any corrosive substance (like battery acid or certain chemicals) on another person to burn and disfigure them. These attacks often target the face and cause permanent scarring, blindness, and extreme pain. This is treated as one of the most brutal crimes in India.",
+        elements: [
+          "A corrosive or burning substance was thrown on, administered to, or used against a person.",
+          "The attack caused or was intended to cause permanent or partial damage, disfigurement, burns, or disability.",
+          "The act was intentional — not an accident."
+        ],
+        punishment: "Minimum 10 years in prison, extendable to life imprisonment. The victim is also entitled to free medical treatment from the government and compensation of at least Rs. 3 lakh (and up to Rs. 8 lakh in many states).",
+        helplines: [
+          { name: "Police Emergency", number: "112" },
+          { name: "Ambulance", number: "108" },
+          { name: "Women Helpline", number: "1091" },
+          { name: "Acid Attack Survivors (Chhanv Foundation)", number: "011-4174-2498" }
+        ]
+      },
+      {
+        title: "Human Trafficking",
+        icon: "bx-transfer-alt",
+        lawRef: "Section 143 - BNS, 2023 / Immoral Traffic Prevention Act",
+        keywords: ["trafficking", "human trafficking", "sex trafficking", "forced labour", "bonded labour", "slave", "slavery", "exploitation", "smuggling people"],
+        definition: "Human trafficking means recruiting, transporting, or holding a person through force, fraud, or deception for the purpose of exploitation. This exploitation can be forced labour (making someone work without pay), sexual exploitation, organ harvesting, or forced begging. Traffickers often target vulnerable people — especially women, children, and migrant workers.",
+        elements: [
+          "A person was recruited, transported, harboured, or received through force, deception, or coercion.",
+          "The purpose was exploitation (forced labour, sexual exploitation, organ removal, etc.).",
+          "The victim did not consent, or their consent was obtained through fear, lies, or abuse of power."
+        ],
+        punishment: "Minimum 7 years, extendable to 10 years in prison and a fine. If the victim is a minor (child), the minimum is 10 years, extendable to life imprisonment. Trafficking for forced labour: 3-7 years.",
+        helplines: [
+          { name: "Anti-Human Trafficking Unit", number: "112" },
+          { name: "Child Helpline", number: "1098" },
+          { name: "Women Helpline", number: "1091" },
+          { name: "Missing Persons", number: "1094" }
+        ]
+      },
+      {
+        title: "Forgery (Faking Documents)",
+        icon: "bx-edit",
+        lawRef: "Section 336 - BNS, 2023",
+        keywords: ["forgery", "forged", "fake document", "fake certificate", "counterfeit", "fake signature", "false document", "impersonation", "fake id"],
+        definition: "Forgery means creating a fake document, certificate, or signature — or altering a real one — with the intention of using it to deceive someone. Examples include making a fake degree certificate, forging someone's signature on a cheque, creating a fake ID card, or altering the amount on a receipt.",
+        elements: [
+          "A person made or altered a document dishonestly or fraudulently.",
+          "The document was intended to be passed off as genuine (real).",
+          "The purpose was to cheat, deceive, or cause harm to another person or organization."
+        ],
+        punishment: "Simple forgery: Up to 2 years in prison and/or a fine. Forgery of a valuable document (property deed, court order, government ID): Up to 7 years. Forgery used for cheating: Up to 10 years.",
+        helplines: [
+          { name: "Police Helpline", number: "100" },
+          { name: "Cyber Crime (digital forgery)", number: "1930" },
+          { name: "Legal Aid (NALSA)", number: "15100" }
+        ]
+      },
+      {
+        title: "Bribery & Corruption",
+        icon: "bx-money",
+        lawRef: "Prevention of Corruption Act, 1988 (Amended 2018)",
+        keywords: ["bribery", "bribe", "corruption", "corrupt", "under the table", "kickback", "government corruption", "public servant", "graft", "rishwat"],
+        definition: "Bribery means offering, giving, or accepting money, gifts, or favours in exchange for doing (or not doing) something in an official or professional capacity. For example, if a traffic police officer asks for money to ignore a traffic violation, that officer is demanding a bribe. Both GIVING and TAKING a bribe are crimes in India.",
+        elements: [
+          "A public servant (government employee, police officer, judge, etc.) accepted or demanded something of value.",
+          "It was in exchange for performing, speeding up, or ignoring an official duty.",
+          "OR: A person offered or gave a bribe to influence a public servant."
+        ],
+        punishment: "Taking a bribe: 3 to 7 years in prison and a fine. Giving a bribe: Up to 7 years and a fine. Habitual offenders (people who do it repeatedly) face 5-10 years. Assets gained through corruption can be confiscated.",
+        helplines: [
+          { name: "Anti-Corruption Helpline (CVC)", number: "1800-11-0031" },
+          { name: "CBI (Anti-Corruption)", number: "011-2430-1484" },
+          { name: "Lokpal Complaints", number: "lokpal.gov.in" },
+          { name: "Police Emergency", number: "112" }
+        ]
+      },
+      {
+        title: "Attempt to Murder",
+        icon: "bx-target-lock",
+        lawRef: "Section 109 - BNS, 2023",
+        keywords: ["attempt to murder", "attempted murder", "tried to kill", "attempted killing", "near death", "attack with weapon"],
+        definition: "Attempt to murder means doing something with the clear intention of killing someone, but the person survives. The key difference from murder is: in attempt to murder, the victim does NOT die. If someone shoots at you but misses, or stabs you but you survive, they can be charged with attempt to murder.",
+        elements: [
+          "The person performed an act that could cause death.",
+          "They had the intention (purpose) of causing death.",
+          "The victim survived — if the victim dies, it becomes murder."
+        ],
+        punishment: "Up to 10 years in prison and a fine. If the act causes hurt/injury, it can extend to life imprisonment. This is a non-bailable offence.",
+        helplines: [
+          { name: "Police Emergency", number: "112" },
+          { name: "Ambulance", number: "108" },
+          { name: "Legal Aid (NALSA)", number: "15100" }
+        ]
+      },
+      {
+        title: "Trespassing (Entering Property Illegally)",
+        icon: "bx-log-in-circle",
+        lawRef: "Section 329 - BNS, 2023",
+        keywords: ["trespass", "trespassing", "break in", "breaking in", "illegal entry", "intrusion", "invaded property", "entered house"],
+        definition: "Trespassing means entering someone's property (house, land, or building) without their permission and with bad intentions. Walking into someone's yard is not automatically trespassing — but entering their locked house or fenced property without permission IS. If done at night or with intent to commit a crime, it becomes 'house-breaking' or 'burglary', which is much more serious.",
+        elements: [
+          "A person entered property that belongs to someone else.",
+          "They entered without the owner's permission or any legal right.",
+          "They had the intention to annoy, insult, intimidate, or commit a crime."
+        ],
+        punishment: "Simple trespass: Up to 3 months in prison and/or a fine. House trespass (entering a dwelling): Up to 1 year. House-breaking (forced entry): Up to 2 years. Housebreaking at night: Up to 3 years. Housebreaking to commit a serious offence: Up to 14 years.",
+        helplines: [
+          { name: "Police Emergency", number: "112" },
+          { name: "Police Helpline", number: "100" }
+        ]
+      },
+      {
+        title: "Rioting & Mob Violence",
+        icon: "bx-group",
+        lawRef: "Section 189-191 - BNS, 2023",
+        keywords: ["riot", "rioting", "mob", "mob violence", "mob lynching", "lynch", "public disturbance", "unlawful assembly", "communal violence", "stone pelting"],
+        definition: "Rioting is when a group of 5 or more people assemble together and use force or violence against people, property, or public order. Mob violence — including mob lynching (a crowd attacking and killing someone) — is treated extremely seriously. Even being part of a violent crowd and not personally hitting anyone can make you guilty.",
+        elements: [
+          "Five or more people assembled together with a common intent.",
+          "The assembly used force, violence, or threats against people or property.",
+          "The violence was directed at disturbing public peace."
+        ],
+        punishment: "Being part of an unlawful assembly: Up to 6 months. Rioting: Up to 2 years. Rioting with a deadly weapon: Up to 3 years. Mob lynching: Can lead to life imprisonment or the death penalty under special state laws.",
+        helplines: [
+          { name: "Police Emergency", number: "112" },
+          { name: "Ambulance", number: "108" },
+          { name: "District Magistrate Office", number: "Local District Number" }
+        ]
+      },
+      {
+        title: "Drunk Driving / Road Rage",
+        icon: "bx-car",
+        lawRef: "Section 185 - Motor Vehicles Act, 1988 / Section 281 BNS",
+        keywords: ["drunk driving", "dui", "drink and drive", "road rage", "rash driving", "over speeding", "hit and run", "accident", "negligent driving"],
+        definition: "Drunk driving means operating a vehicle (car, bike, truck, etc.) while under the influence of alcohol or drugs. Road rage is aggressive or violent behaviour by a driver toward another road user. Rash and negligent driving — like speeding through a crowded area — is also a crime even without alcohol. If someone dies because of your reckless driving, you can be charged with culpable homicide.",
+        elements: [
+          "The person was driving a vehicle on a public road.",
+          "They were intoxicated (blood alcohol level above 30 mg/100 ml) OR driving dangerously.",
+          "Their behaviour endangered the life or safety of other people."
+        ],
+        punishment: "First offence drunk driving: Up to 6 months and/or Rs. 10,000 fine. Repeat offence: Up to 2 years and/or Rs. 15,000 fine. Rash driving causing death: Up to 5 years in prison. Hit-and-run causing death: Up to 10 years under the amended Motor Vehicles Act.",
+        helplines: [
+          { name: "Police Emergency", number: "112" },
+          { name: "Ambulance", number: "108" },
+          { name: "Road Accident Helpline", number: "1073" },
+          { name: "Traffic Police", number: "103" }
+        ]
+      },
+      {
+        title: "Money Laundering",
+        icon: "bx-transfer",
+        lawRef: "Prevention of Money Laundering Act (PMLA), 2002",
+        keywords: ["money laundering", "black money", "hawala", "benami", "proceeds of crime", "shell company", "tax evasion", "illegal money"],
+        definition: "Money laundering means hiding or disguising money earned from illegal activities (like drug trafficking, corruption, or fraud) to make it look like it came from legal sources. Criminals 'wash' dirty money by routing it through fake businesses, foreign bank accounts, or real estate purchases. In simple terms: making illegal money look legal.",
+        elements: [
+          "Money or property was obtained from criminal activity (the 'proceeds of crime').",
+          "A person knowingly tried to conceal, possess, use, or project it as clean/legal money.",
+          "They assisted in any process to disguise the origins of the criminal money."
+        ],
+        punishment: "3 to 7 years in prison and a fine up to Rs. 5 lakh. In cases connected to scheduled offences under NDPS (drugs), the punishment can extend to up to 10 years. All property involved in money laundering can be seized and confiscated by the government.",
+        helplines: [
+          { name: "Enforcement Directorate", number: "011-2301-3698" },
+          { name: "Income Tax (for tax evasion)", number: "1800-180-1961" },
+          { name: "Police Emergency", number: "112" }
+        ]
+      },
+      {
+        title: "Sedition / Anti-National Activity",
+        icon: "bx-flag",
+        lawRef: "Section 152 - BNS, 2023 (Endangering Sovereignty)",
+        keywords: ["sedition", "anti national", "treason", "separatism", "secessionism", "national security", "sovereignty", "waging war"],
+        definition: "Under the new BNS, the old 'sedition' law has been replaced with a more specific law against endangering the sovereignty, unity, and integrity of India. This means it is a crime to encourage or incite armed rebellion, separatist movements, or activities that threaten to break up the country — through words, signs, electronic communication, or financial support.",
+        elements: [
+          "A person used words, signs, or visible/electronic communication to excite or attempt to excite secession or armed rebellion.",
+          "The act endangered or was intended to endanger the sovereignty, unity, or integrity of India.",
+          "The person acted with knowledge and intent, not merely expressing criticism or dissent."
+        ],
+        punishment: "Up to life imprisonment and a fine, OR up to 7 years and a fine. Note: Expressing disapproval of government policies or criticising government actions is NOT a crime — only inciting violence or armed rebellion against the state is.",
+        helplines: [
+          { name: "Police Emergency", number: "112" },
+          { name: "National Investigation Agency (NIA)", number: "011-2437-1011" },
+          { name: "Legal Aid (NALSA)", number: "15100" }
+        ]
+      },
+      {
+        title: "Cruelty to Animals",
+        icon: "bx-heart",
+        lawRef: "Prevention of Cruelty to Animals Act, 1960 / Section 325 BNS",
+        keywords: ["animal cruelty", "animal abuse", "cruelty to animals", "dog fighting", "bull fighting", "animal torture", "stray dogs", "pet abuse"],
+        definition: "Cruelty to animals means causing unnecessary pain, suffering, or harm to any animal — whether it is a pet, stray, farm animal, or wild animal. This includes beating an animal, starving it, overloading a work animal, organising animal fights (like dogfighting or cockfighting), abandoning a sick pet, or killing an animal inhumanely.",
+        elements: [
+          "An animal was subjected to unnecessary pain, suffering, or cruelty.",
+          "The cruelty could be physical (beating, maiming) or through neglect (starving, abandoning).",
+          "The act was done intentionally or through gross negligence."
+        ],
+        punishment: "First offence: Fine of Rs. 10-50 (under the old Act, which is being updated). Subsequent offences: Up to 3 months in prison and/or fine up to Rs. 100. Note: New amendments propose much stricter penalties of up to 5 years and Rs. 75,000-10 lakh fines. Killing a cow is a separate offence in many states with 7-10 year sentences.",
+        helplines: [
+          { name: "Animal Welfare Board", number: "044-2254-1124" },
+          { name: "SPCA / Blue Cross", number: "Local SPCA Number" },
+          { name: "Police Emergency", number: "112" }
+        ]
+      },
+      {
+        title: "Outraging Religious Sentiments",
+        icon: "bx-church",
+        lawRef: "Section 299 - BNS, 2023",
+        keywords: ["blasphemy", "religious offence", "hurting religious sentiments", "communal", "desecration", "insult religion", "hate speech", "religious hatred"],
+        definition: "This law makes it a crime to deliberately and maliciously insult someone's religion or religious beliefs with the intention of hurting their feelings. This includes destroying or damaging a place of worship, disrupting a religious gathering, or making remarks intended to provoke religious hatred. Important: fair criticism or academic discussion of religion is generally protected.",
+        elements: [
+          "A person deliberately insulted or attempted to insult the religion or religious beliefs of any group.",
+          "The act was done with malicious intent — to wound religious feelings, not for genuine discussion.",
+          "The insult was through words, sounds, gestures, objects, or any visible representation."
+        ],
+        punishment: "Up to 3 years in prison and/or a fine. If the act promotes enmity between religious groups on grounds of religion: Up to 5 years and a fine.",
+        helplines: [
+          { name: "Police Emergency", number: "112" },
+          { name: "National Human Rights Commission", number: "011-2338-5368" },
+          { name: "Legal Aid (NALSA)", number: "15100" }
+        ]
+      }
+    ];
+
+    // ══════════════════════════════════════════════════════════
+    // PASSWORD ACCESS GATE
+    // ══════════════════════════════════════════════════════════
+    const ACCESS_CODE = "justice2024";
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (sessionStorage.getItem('lawModuleAuth') === 'granted') {
+        document.getElementById('passwordOverlay').style.display = 'none';
+        return;
+      }
+      document.getElementById('passwordOverlay').style.display = 'flex';
+    });
+
+    function attemptAccess() {
+      const input = document.getElementById('accessCodeInput');
+      const errMsg = document.getElementById('accessError');
+      if (input.value === ACCESS_CODE) {
+        sessionStorage.setItem('lawModuleAuth', 'granted');
+        const overlay = document.getElementById('passwordOverlay');
+        overlay.style.opacity = '0';
+        setTimeout(() => overlay.style.display = 'none', 400);
+      } else {
+        errMsg.style.display = 'block';
+        input.value = '';
+        input.focus();
+        input.style.borderColor = '#ff4444';
+        setTimeout(() => { input.style.borderColor = 'rgba(255,159,67,0.5)'; }, 1500);
+      }
+    }
+
+    document.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && document.getElementById('passwordOverlay').style.display === 'flex') {
+        attemptAccess();
+      }
+    });
+
+    // ══════════════════════════════════════════════════════════
+    // SEARCH ENGINE
+    // ══════════════════════════════════════════════════════════
+    const searchInput = document.getElementById('crimeSearch');
+    const searchBtn = document.getElementById('searchBtn');
+    const resultsArea = document.getElementById('resultsArea');
+    const resultsContainer = document.getElementById('resultsContainer');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+
+    searchBtn.addEventListener('click', performSearch);
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') performSearch();
+    });
+
+    function quickSearch(term) {
+      searchInput.value = term;
+      performSearch();
+    }
+
+    function performSearch() {
+      const query = searchInput.value.toLowerCase().trim();
+      if (!query) return;
+
+      resultsArea.style.display = 'none';
+      loadingSpinner.style.display = 'block';
+      resultsContainer.innerHTML = '';
+
+      setTimeout(() => {
+        loadingSpinner.style.display = 'none';
+
+        // Search by matching keywords
+        const queryWords = query.split(/\s+/);
+        const matches = legalDB.filter(entry => {
+          return entry.keywords.some(kw => {
+            return queryWords.some(qw => kw.includes(qw) || qw.includes(kw));
+          });
+        });
+
+        if (matches.length === 0) {
+          resultsContainer.innerHTML = `
+            <div class="no-results">
+              <i class='bx bx-search-alt'></i>
+              <h3>No Results Found for "${query}"</h3>
+              <p>Try using simpler keywords like "theft", "assault", "murder", or click one of the suggestion chips above.</p>
+            </div>`;
+          resultsArea.style.display = 'block';
+          return;
+        }
+
+        matches.forEach((entry, idx) => {
+          const card = document.createElement('div');
+          card.className = 'result-card';
+          card.style.animationDelay = `${idx * 0.1}s`;
+
+          let elementsHTML = entry.elements.map(e => `<li>${e}</li>`).join('');
+          let helplinesHTML = entry.helplines.map(h =>
+            `<div class="helpline-item">
+              <i class='bx bx-phone-call' style="color: #00c864;"></i>
+              <span>${h.name}:</span>
+              <span class="hl-number">${h.number}</span>
+            </div>`
+          ).join('');
+
+          card.innerHTML = `
+            <div class="result-card-header">
+              <div class="card-icon"><i class='bx ${entry.icon}'></i></div>
+              <div>
+                <h2>${entry.title}</h2>
+                <div class="law-tag"><i class='bx bx-bookmark'></i> ${entry.lawRef}</div>
+              </div>
+            </div>
+            <div class="result-card-body">
+              <div class="info-block">
+                <div class="info-block-title"><i class='bx bx-book-open'></i> What Does This Mean?</div>
+                <div class="info-block-content">${entry.definition}</div>
+              </div>
+
+              <div class="info-block">
+                <div class="info-block-title"><i class='bx bx-list-check'></i> What Makes It a Crime?</div>
+                <div class="info-block-content"><ul>${elementsHTML}</ul></div>
+              </div>
+
+              <div class="info-block">
+                <div class="info-block-title"><i class='bx bx-gavel'></i> What is the Punishment?</div>
+                <div class="punishment-box"><i class='bx bx-error-circle'></i> ${entry.punishment}</div>
+              </div>
+
+              <div class="helpline-box">
+                <div class="helpline-title"><i class='bx bx-phone-call'></i> Need Help? Call These Numbers</div>
+                ${helplinesHTML}
+              </div>
+            </div>
+          `;
+          resultsContainer.appendChild(card);
+        });
+
+        resultsArea.style.display = 'block';
+      }, 500);
+    }
+  </script>
+</body>
+</html>

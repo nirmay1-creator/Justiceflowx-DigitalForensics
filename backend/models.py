@@ -42,3 +42,14 @@ class IPReputationCache(Base):
     abuse_confidence_score = Column(Integer, nullable=False, default=0)
     is_malicious = Column(Boolean, nullable=False, default=False)
     last_checked = Column(DateTime(timezone=True), server_default=func.now())
+
+from sqlalchemy import Text
+
+class LegalKnowledge(Base):
+    __tablename__ = "legal_knowledge"
+
+    id = Column(Integer, primary_key=True, index=True)
+    document_name = Column(String(200), nullable=False)
+    section_title = Column(String(200), index=True, nullable=False)
+    raw_text = Column(Text, nullable=False)
+    keywords = Column(Text, nullable=True)
